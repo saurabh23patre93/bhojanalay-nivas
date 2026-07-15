@@ -1,0 +1,41 @@
+# Java
+target/
+*.class
+*.log
+*.jar
+*.war
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# Node
+node_modules/
+
+# React
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+
+# Environment
+.env
+.env.*
+
+# Docker
+*.pid
