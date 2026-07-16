@@ -9,13 +9,13 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    boolean existsByEmail(String email);
-
-    boolean existsByMobile(String mobile);
-
     Optional<User> findByEmail(String email);
 
     Optional<User> findByMobile(String mobile);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByMobile(String mobile);
 
     @EntityGraph(attributePaths = "roles")
     Optional<User> findWithRolesByEmail(String email);
