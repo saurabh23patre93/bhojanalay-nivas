@@ -2,6 +2,7 @@ package com.bhojanalay.auth.api.controller;
 
 import com.bhojanalay.auth.common.response.ApiResponse;
 import com.bhojanalay.auth.dto.request.LoginRequest;
+import com.bhojanalay.auth.dto.request.LogoutRequest;
 import com.bhojanalay.auth.dto.request.RefreshTokenRequest;
 import com.bhojanalay.auth.dto.request.RegisterRequest;
 import com.bhojanalay.auth.dto.response.LoginResponse;
@@ -58,32 +59,20 @@ public class AuthController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    /*@PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(
-            @Valid @RequestBody LoginRequest request) {
-
-        return ResponseEntity.ok(
-                ApiResponse.success(authService.login(request))
-        );
-    }*/
-
     @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResponse<RefreshTokenResponse>> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest request) {
-
-        return ResponseEntity.ok(
-                ApiResponse.success(authService.refreshToken(request))
-        );
+    public ResponseEntity<ApiResponse<RefreshTokenResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        RefreshTokenResponse response = authService.refreshToken(request);
+        return ResponseEntity.ok(ApiResponse.<RefreshTokenResponse>builder()
+                .success(true)
+                .message("Token Refreshed")
+                .data(response)
+                .timestamp(String.valueOf(LocalDateTime.now()))
+                .build());
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(
-            @Valid @RequestBody LogoutRequest request) {
-
+    public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest request) {
         authService.logout(request);
-
-        return ResponseEntity.ok(
-                ApiResponse.success("Logout Successful")
-        );
+        return ResponseEntity.noContent().build();
     }
 }

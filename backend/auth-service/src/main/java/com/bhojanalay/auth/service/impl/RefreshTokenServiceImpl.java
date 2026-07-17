@@ -15,6 +15,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Value("${security.refresh-token.expiration-seconds:1209600}") // default 14 days
+    @Value("${security.refresh-token.expiration-seconds:1209600}") // 14 days default
     private Long refreshTokenExpirationSeconds;
 
     private final SecureRandom secureRandom = new SecureRandom();
@@ -45,18 +46,18 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshToken verifyRefreshToken(String token) {
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
+        RefreshToken rt = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new RefreshTokenNotFoundException(token));
 
-        if (refreshToken.isRevoked()) {
+        if (rt.isRevoked()) {
             throw new RefreshTokenExpiredException("Refresh token revoked");
         }
 
-        if (refreshToken.getExpiresAt().isBefore(Instant.now())) {
+        if (rt.getExpiresAt().isBefore(Instant.now())) {
             throw new RefreshTokenExpiredException("Refresh token expired");
         }
 
-        return refreshToken;
+        return rt;
     }
 
     @Override
@@ -69,7 +70,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public void revokeAllForUser(Long userId) {
+    public void revokeAllForUser(UUID userId) {
         refreshTokenRepository.deleteByUserId(userId);
     }
 

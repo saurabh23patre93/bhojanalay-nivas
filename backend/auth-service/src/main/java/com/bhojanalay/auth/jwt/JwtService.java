@@ -1,5 +1,6 @@
 package com.bhojanalay.auth.jwt;
 
+import com.bhojanalay.auth.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -21,30 +22,42 @@ public class JwtService {
     }
 
     public String generateToken(String username) {
-
         Date now = new Date();
         Date expiry = new Date(now.getTime() + jwtProperties.expiration());
 
-        return Jwts.builder().subject(username).issuedAt(now).expiration(expiry).signWith(getSigningKey()).compact();
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String generateAccessToken(User user) {
+        return generateToken(user.getEmail());
+    }
+
+    public Long getAccessTokenExpiry() {
+        return jwtProperties.expiration();
     }
 
     public String extractUsername(String token) {
-
         return extractClaims(token).getSubject();
     }
 
     public boolean isTokenValid(String token, String username) {
-
         return username.equals(extractUsername(token)) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
-
         return extractClaims(token).getExpiration().before(new Date());
     }
 
     private Claims extractClaims(String token) {
-
-        return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

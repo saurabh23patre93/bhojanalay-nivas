@@ -1,5 +1,8 @@
 package com.bhojanalay.auth.service.impl;
 
+import com.bhojanalay.auth.dto.request.LogoutRequest;
+import com.bhojanalay.auth.dto.request.RefreshTokenRequest;
+import com.bhojanalay.auth.dto.response.RefreshTokenResponse;
 import com.bhojanalay.auth.entity.RefreshToken;
 import com.bhojanalay.auth.jwt.JwtService;
 import com.bhojanalay.auth.dto.request.LoginRequest;
@@ -83,5 +86,27 @@ public class AuthServiceImpl implements AuthService {
                 .tokenType("Bearer")
                 .expiresIn(jwtService.getAccessTokenExpiry())
                 .build();
+    }
+
+    @Override
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
+
+        RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(request.getRefreshToken());
+
+        User user = refreshToken.getUser();
+
+        String accessToken = jwtService.generateToken(user.getEmail());
+
+        return RefreshTokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .tokenType("Bearer")
+                .expiresIn(jwtService.getAccessTokenExpiry())
+                .build();
+    }
+
+    @Override
+    public void logout(LogoutRequest request) {
+        refreshTokenService.revokeToken(request.getRefreshToken());
     }
 }

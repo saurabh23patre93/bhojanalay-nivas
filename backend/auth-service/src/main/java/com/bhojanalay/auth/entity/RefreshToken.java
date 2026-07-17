@@ -2,25 +2,28 @@ package com.bhojanalay.auth.entity;
 
 import com.bhojanalay.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.experimental.SuperBuilder;
-
-import java.time.LocalDateTime;
+import lombok.*;
+import java.time.Instant;
 
 @Entity
-@Table(name = "refresh_tokens")
-@SuperBuilder
+@Table(name = "refresh_tokens", indexes = @Index(columnList = "token", unique = true))
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RefreshToken extends BaseEntity {
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 512)
     private String token;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private LocalDateTime expiryDate;
+    @Column(name = "expires_at", nullable = false)
+    private Instant expiresAt;
 
-    @Column(nullable = false)
-    private boolean revoked;
+    @Column(name = "revoked", nullable = false)
+    private boolean revoked = false;
 }
