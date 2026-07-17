@@ -1,0 +1,16 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/authdb
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: ThisIsMyVeryLongSecretKeyForJWTTokenGeneration123456789
+  expiration: 900000
