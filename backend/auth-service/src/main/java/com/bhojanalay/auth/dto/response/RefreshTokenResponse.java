@@ -1,16 +1,17 @@
 package com.bhojanalay.auth.dto.response;
 
 import lombok.*;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class RefreshTokenResponse {
 
     private String accessToken;
     private String refreshToken;
     private String tokenType;
     private Long expiresIn;
+
 }

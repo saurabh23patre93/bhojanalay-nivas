@@ -1,6 +1,10 @@
 package com.bhojanalay.auth.service.impl;
 
+import com.bhojanalay.auth.entity.RefreshToken;
+import com.bhojanalay.auth.jwt.JwtService;
+import com.bhojanalay.auth.dto.request.LoginRequest;
 import com.bhojanalay.auth.dto.request.RegisterRequest;
+import com.bhojanalay.auth.dto.response.LoginResponse;
 import com.bhojanalay.auth.dto.response.RegisterResponse;
 import com.bhojanalay.auth.entity.Role;
 import com.bhojanalay.auth.entity.User;
@@ -8,9 +12,12 @@ import com.bhojanalay.auth.mapper.UserMapper;
 import com.bhojanalay.auth.repository.RoleRepository;
 import com.bhojanalay.auth.repository.UserRepository;
 import com.bhojanalay.auth.service.AuthService;
+import com.bhojanalay.auth.service.RefreshTokenService;
 import com.bhojanalay.common.bootstrep.SecurityConstants;
 import com.bhojanalay.common.exception.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +29,9 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
@@ -45,5 +55,33 @@ public class AuthServiceImpl implements AuthService {
         User savedUser = userRepository.save(user);
 
         return userMapper.toResponse(savedUser);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        User user = userRepository.findWithRolesByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        String accessToken =
+                jwtService.generateAccessToken(user);
+
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(user);
+
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .tokenType("Bearer")
+                .expiresIn(jwtService.getAccessTokenExpiry())
+                .build();
     }
 }

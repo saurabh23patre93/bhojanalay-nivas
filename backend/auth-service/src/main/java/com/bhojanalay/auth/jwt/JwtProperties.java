@@ -1,4 +1,4 @@
-package com.bhojanalay.auth.config;
+package com.bhojanalay.auth.jwt;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
