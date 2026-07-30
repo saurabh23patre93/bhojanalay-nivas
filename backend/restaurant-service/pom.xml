@@ -123,11 +123,11 @@
 		</dependency>
 
 		<!-- Common Library -->
-		<!--<dependency>
+		<dependency>
 			<groupId>com.bhojanalay</groupId>
-			<artifactId>common-lib</artifactId>
-			<version>1.0.0</version>
-		</dependency>-->
+			<artifactId>common-library</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 		<!-- Testing -->
 		<dependency>
