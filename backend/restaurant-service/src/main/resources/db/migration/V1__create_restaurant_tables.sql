@@ -16,15 +16,15 @@ CREATE TABLE restaurants
 
     description TEXT,
 
-    rating NUMERIC(2,1),
+    rating NUMERIC(2,1) DEFAULT 0.0,
 
-    status VARCHAR(30),
+    status VARCHAR(30) NOT NULL,
 
-    verified BOOLEAN DEFAULT FALSE,
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
 
-    active BOOLEAN DEFAULT TRUE,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
 
-    created_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL,
 
     updated_at TIMESTAMP
 );
