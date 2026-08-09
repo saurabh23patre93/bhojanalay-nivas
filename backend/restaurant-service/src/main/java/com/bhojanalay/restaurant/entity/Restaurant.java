@@ -1,6 +1,6 @@
 package com.bhojanalay.restaurant.entity;
 
-import com.bhojanalay.common.enums.RestaurantStatus;
+import com.bhojanalay.restaurant.enums.RestaurantStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
